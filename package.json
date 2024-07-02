@@ -8,7 +8,12 @@
     "serve": "ts-node src/server.ts",
     "dev": "nodemon --config nodemon.json",
     "start": "nodemon",
-    "test": "jest"
+    "test": "jest",
+    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/databaseconnection/data-source.ts",
+    "migration:revert": "npx typeorm migration:revert",
+    "migration:generate": "npx typeorm migration:generate -n",
+    "migration:create": "npx typeorm migration:create -n",
+    "migration:show": "npx typeorm migration:show"
   },
   "author": "",
   "license": "ISC",

@@ -1,9 +1,20 @@
+
 import app from "./app";
-import dataconnection from "./databaseconnectiom/connection";
+import { seedDatabase } from "./seeders/user-seeder";
+import dataconnection from "./databaseconnection/data-source";
 
-app.listen(8080, () => console.log("Server is running on port 8080"));
+const PORT = 8080;
 
-dataconnection
-  .initialize()
-  .then(() => console.log("connected to database"))
-  .catch((err) => console.log(err));
+
+app.listen(PORT, async () => {
+  console.log(`Server is running on port ${PORT}`);
+
+  try {
+    await dataconnection.initialize();
+    console.log("Connected to database");
+
+    await seedDatabase();
+  } catch (error) {
+    console.error("Error connecting to database:", error);
+  }
+});

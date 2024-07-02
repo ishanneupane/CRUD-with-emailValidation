@@ -1,15 +1,14 @@
 import koa from "koa";
 import jwt from "koa-jwt";
 import bodyParser from "koa-bodyparser";
-
 import dataRouter from "../src/route.controller";
-import connection from "./databaseconnectiom/connection";
+import connection from "./databaseconnection/data-source";
 import routes from "../src/route.controller";
 const app = new koa();
 app.use(bodyParser());
 app.use(async (ctx, next) => {
   try {
-    ctx.state.db = connection;   
+    ctx.state.db = connection;
 
     await next();
   } catch (error) {

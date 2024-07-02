@@ -7,14 +7,16 @@
     "build": "tsc",
     "serve": "ts-node src/server.ts",
     "dev": "nodemon --config nodemon.json",
-    "start": "nodemon",
+    "start": "node dist/datasource.js",
     "test": "jest"
+   
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
+    "@types/faker": "^6.6.9",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/koa": "^2.15.0",
@@ -218,6 +220,7 @@
     "tsscmp": "^1.0.6",
     "tsutils": "^2.29.0",
     "type-is": "^1.6.18",
+    "typeorm-seeding": "^1.6.1",
     "undefsafe": "^2.0.5",
     "undici-types": "^5.26.5",
     "unpipe": "^1.0.0",

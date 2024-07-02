@@ -14,7 +14,7 @@ const connectionOptions: DataSourceOptions = {
   synchronize: false,
   logging: false,
   entities: [
-    join(parentDir, "entity", "*.ts"),
+    join(parentDir, "src","entity", "*.ts"),
     join(parentDir, "entity", "*.js"),
   ],
   migrations: ["src/migrations/**/*.ts"],

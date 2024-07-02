@@ -12,32 +12,40 @@ import {
 } from "./schema/validator";
 const routerOpts: Router.IRouterOptions = {};
 const router = new Router(routerOpts);
-const storage = multer.diskStorage(
-  {
-
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    
-    cb(null,"uploads");
+    cb(null, "uploads");
   },
-  
+
   filename: function (req, file, cb) {
     const originalName = encodeURIComponent(
       path.parse(file.originalname).name
     ).replace(/[^a-zA-Z0-9]/g, "");
     const timestamp = Date.now();
-    
 
     const extension = path.extname(file.originalname).toLowerCase();
     cb(null, originalName + timestamp + extension);
   },
 });
 
-const upload = multer({ storage: storage, limits: { fileSize:1024* 1024*4 }, fileFilter(req, file, callback) {
-  if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-    return callback(new Error("Please upload an image with extension jpg, jpeg or png"));
-  } 
-  callback(null, true);
-}, },);
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1024 * 1024 * 4 },
+  fileFilter(req, file, callback) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return callback(
+        new Error("Please upload an image with extension jpg, jpeg or png")
+      );
+    }
+    callback(null, true);
+  },
+});
+
+const generateToken = (id: number) => {
+  return Jwt.sign({ id }, process.env.JWT_SECRET as string, {
+    expiresIn: "5h",
+  });
+};
 
 router.post("/upload-single-file", (ctx: Koa.Context, next: Koa.Next) => {
   return new Promise<void>((resolve, reject) => {
@@ -53,35 +61,25 @@ router.post("/upload-single-file", (ctx: Koa.Context, next: Koa.Next) => {
   })
     .then(() => {
       console.log("ctx.request.file", (ctx.req as any).file);
-  
 
       ctx.status = 200;
-const fileData = (ctx.req as any).file.originalname
+      const fileData = (ctx.req as any).file.originalname;
       ctx.body = {
         message: "File uploaded successfully",
-      
-          file:fileData, }
-          
-      
-  
+
+        file: fileData,
+      };
     })
     .catch((err) => {
       ctx.status = 500;
       ctx.body = {
         message: "File upload failed",
-        error: { message: err.message,  },
+        error: { message: err.message },
       };
-    })
-   
+    });
 });
 
-const generateToken = (id: number) => {
-  return Jwt.sign({ id }, process.env.JWT_SECRET as string, {
-    expiresIn: "5h",
-  });
-};
-
-  router.get("/", async (ctx: Koa.Context) => {
+router.get("/", async (ctx: Koa.Context) => {
   const data: Repository<User> = ctx.state.db.getRepository(User);
   const userData = await data.find();
   ctx.body = { data: userData };

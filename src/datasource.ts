@@ -17,8 +17,8 @@ const connectionOptions: DataSourceOptions = {
     join(parentDir, "entity", "*.ts"),
     join(parentDir, "entity", "*.js"),
   ],
-  migrations: ["src/databaseconnection/migrations/**/*.ts"],
-  migrationsTableName: "custom_migration_table",
-};
+  migrations: ["src/migrations/**/*.ts"],
+  
+ };
 const connection = new DataSource(connectionOptions);
 export default connection;

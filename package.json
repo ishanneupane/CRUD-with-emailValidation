@@ -7,8 +7,9 @@
     "build": "tsc",
     "serve": "ts-node src/server.ts",
     "dev": "nodemon --config nodemon.json",
-    "start": "nodemon",
+    "start": "node dist/datasource.js",
     "test": "jest"
+   
   },
   "author": "",
   "license": "ISC",

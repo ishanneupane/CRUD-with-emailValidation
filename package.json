@@ -8,12 +8,7 @@
     "serve": "ts-node src/server.ts",
     "dev": "nodemon --config nodemon.json",
     "start": "nodemon",
-    "test": "jest",
-    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/databaseconnection/data-source.ts",
-    "migration:revert": "npx typeorm migration:revert",
-    "migration:generate": "npx typeorm migration:generate -n",
-    "migration:create": "npx typeorm migration:create -n",
-    "migration:show": "npx typeorm migration:show"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -39,6 +34,7 @@
     "ts-node": "^10.9.2",
     "tslint": "^5.20.1",
     "tslint-config-airbnb": "^5.11.2",
+    "typeorm": "^0.3.20",
     "typescript": "^3.9.10"
   },
   "dependencies": {
@@ -223,7 +219,6 @@
     "tsscmp": "^1.0.6",
     "tsutils": "^2.29.0",
     "type-is": "^1.6.18",
-    "typeorm": "^0.3.20",
     "typeorm-seeding": "^1.6.1",
     "undefsafe": "^2.0.5",
     "undici-types": "^5.26.5",

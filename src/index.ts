@@ -1,9 +1,9 @@
 import koa from "koa";
 import jwt from "koa-jwt";
 import bodyParser from "koa-bodyparser";
-import dataRouter from "./route.controller";
+import dataRouter from "./router/route.controller";
 import connection from "./datasource";
-import routes from "./route.controller";
+import routes from "./router/route.controller";
 const app = new koa();
 app.use(bodyParser());
 app.use(async (ctx, next) => {
@@ -21,7 +21,7 @@ app.use(async (ctx, next) => {
 
 export const auth = jwt({ secret: process.env.JWT_SECRET });
 
-app.use(auth.unless({ path: [/^\/public/, /^\/signup/, /^\/login/] }));
+app.use(auth.unless({ path: [/^\/public/, /^\/signup/, /^\/login/,/^\/get-otp/,/^\/verify-otp/] }));
 
 const router = routes;
 

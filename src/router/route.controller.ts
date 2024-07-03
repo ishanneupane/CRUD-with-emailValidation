@@ -3,13 +3,14 @@ import Router from "koa-router";
 import * as Jwt from "jsonwebtoken";
 import multer from "multer";
 import * as bcrypt from "bcrypt";
-import User from "./entity/user";
+import User from "../entity/user";
 import path from "path";
 import { Repository } from "typeorm";
+import { generateOtp, sendOtp } from "../auth/otp";
 import {
   userValidationCreateSchema,
   userValidationUpdateSchema,
-} from "./schema/validator";
+} from "../schema/validator";
 const routerOpts: Router.IRouterOptions = {};
 const router = new Router(routerOpts);
 const storage = multer.diskStorage({
@@ -78,11 +79,56 @@ router.post("/upload-single-file", (ctx: Koa.Context, next: Koa.Next) => {
       };
     });
 });
+router.post("/get-otp", async (ctx: Koa.Context) => {
+  const { email } = ctx.request.body as { email: string };
 
-router.get("/", async (ctx: Koa.Context) => {
+  if (!email) {
+    ctx.status = 400;
+    ctx.body = { message: "Email is required" };
+    return;
+  }
   const data: Repository<User> = ctx.state.db.getRepository(User);
-  const userData = await data.find();
-  ctx.body = { data: userData };
+  const userData = await data.findOne({ where: { email:email } });
+  if (!userData) {
+    ctx.status = 404;
+    ctx.body = { message: "User not found" };
+    return;
+  }
+
+
+  const otp = generateOtp();
+  try {
+    await sendOtp(email, otp);
+    
+  await data.update({ email:email }, { otp: otp, otpExpiry: new Date(Date.now() + 5 * 60 * 1000) });
+    ctx.body = { message: "OTP sent successfully to email" };
+  } catch (error) {
+    console.error("Error sending OTP:", error); // Log the error
+    ctx.status = 500;
+    ctx.body = { message: "Internal server error", error: error.message };
+  }
+});
+router.post('/verify-otp', async (ctx: Koa.Context) => {
+  const { email, otp } = ctx.request.body as { email: string, otp: number };
+
+  if (!email || !otp) {
+    ctx.status = 400;
+    ctx.body = { message: "Email and OTP are required" };
+    return;
+  }
+
+  const data: Repository<User> = ctx.state.db.getRepository(User);
+  const userData = await data.findOne({ where: { email:email } });
+  if (otp==userData.otp) {
+  await data.update({ email:email }, { isValidEmail: true,otp: null, otpExpiry: null });
+    
+    ctx.body = { message: "OTP verified successfully" };
+  } else {
+    ctx.status = 400;
+    ctx.body = { message: "Invalid OTP" }; 
+  }
+
+
 });
 
 router.get("/:id", async (ctx: Koa.Context) => {
@@ -138,12 +184,18 @@ router.post("/login", async (ctx: Koa.Context) => {
     }
     const isMatch = await bcrypt.compare(password, userData.password);
 
-    if (isMatch) {
+
+    if(userData.isValidEmail==false){
+      ctx.status=400;
+      ctx.body={message:"Please verify your email first"}
+      return;
+    }
+    if (isMatch ) {
       const token = generateToken(userData.id);
       ctx.body = { message: "User logged in", token };
     } else {
       ctx.status = 401;
-      ctx.body = { message: "Wrong password" };
+      ctx.body = { message: "Wrong password " };
     }
   } catch (error) {
     ctx.status = 500;

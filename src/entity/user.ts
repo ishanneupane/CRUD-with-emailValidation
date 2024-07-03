@@ -19,4 +19,10 @@ export default class User {
 
   @UpdateDateColumn({ type: "timestamp" })
   updated_at: Date;
+  @Column({default: false, nullable: true})
+  isValidEmail: Boolean;
+  @Column({ nullable: true})
+  otp: Number;
+  @Column({nullable: true})
+  otpExpiry: Date;
 }

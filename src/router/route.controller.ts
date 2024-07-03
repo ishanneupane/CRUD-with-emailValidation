@@ -1,18 +1,15 @@
 import * as Koa from "koa";
-import Router from "koa-router";
 import * as Jwt from "jsonwebtoken";
 import multer from "multer";
 import * as bcrypt from "bcrypt";
 import User from "../entity/user";
 import path from "path";
 import { Repository } from "typeorm";
-import { generateOtp, sendOtp } from "../auth/otp";
+import { generateOtp, sendOtp } from "../helper/otp.helper";
 import {
   userValidationCreateSchema,
   userValidationUpdateSchema,
 } from "../schema/validator";
-const routerOpts: Router.IRouterOptions = {};
-const router = new Router(routerOpts);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
@@ -48,7 +45,7 @@ const generateToken = (id: number) => {
   });
 };
 
-router.post("/upload-single-file", (ctx: Koa.Context, next: Koa.Next) => {
+const uploadFile = (ctx: Koa.Context, next: Koa.Next) => {
   return new Promise<void>((resolve, reject) => {
     upload.single("file")((ctx as any).req, (ctx as any).res, (err: any) => {
       if (err) {
@@ -78,8 +75,8 @@ router.post("/upload-single-file", (ctx: Koa.Context, next: Koa.Next) => {
         error: { message: err.message },
       };
     });
-});
-router.post("/get-otp", async (ctx: Koa.Context) => {
+};
+const getOtp = async (ctx: Koa.Context) => {
   const { email } = ctx.request.body as { email: string };
 
   if (!email) {
@@ -107,8 +104,8 @@ router.post("/get-otp", async (ctx: Koa.Context) => {
     ctx.status = 500;
     ctx.body = { message: "Internal server error", error: error.message };
   }
-});
-router.post('/verify-otp', async (ctx: Koa.Context) => {
+};
+ const verifyOtp = async (ctx: Koa.Context) => {
   const { email, otp } = ctx.request.body as { email: string, otp: number };
 
   if (!email || !otp) {
@@ -129,9 +126,9 @@ router.post('/verify-otp', async (ctx: Koa.Context) => {
   }
 
 
-});
+};
 
-router.get("/:id", async (ctx: Koa.Context) => {
+ const findId=async (ctx: Koa.Context) => {
   const data: Repository<User> = ctx.state.db.getRepository(User);
   const userData = await data.findOne({
     where: { id: (ctx as any).params.id },
@@ -142,9 +139,9 @@ router.get("/:id", async (ctx: Koa.Context) => {
     return;
   }
   ctx.body = { data: userData };
-});
+};
 
-router.post("/signup", async (ctx: Koa.Context) => {
+const signup= async (ctx: Koa.Context) => {
   try {
     const data: Repository<User> = ctx.state.db.getRepository(User);
     await userValidationCreateSchema.validate(ctx.request.body);
@@ -161,9 +158,9 @@ router.post("/signup", async (ctx: Koa.Context) => {
     ctx.status = 500;
     ctx.body = { message: "Internal server error", error: error.message };
   }
-});
+};
 
-router.post("/login", async (ctx: Koa.Context) => {
+const login= async (ctx: Koa.Context) => {
   try {
     await userValidationCreateSchema.validate(ctx.request.body);
     const { email, password } = ctx.request.body as {
@@ -201,8 +198,8 @@ router.post("/login", async (ctx: Koa.Context) => {
     ctx.status = 500;
     ctx.body = { message: "Internal server error", error: error.message };
   }
-});
-router.put("/profile", async (ctx: Koa.Context) => {
+}
+const updateProfile= async (ctx: Koa.Context) => {
   try {
     await userValidationUpdateSchema.validate(ctx.request.body);
     const userId = ctx.state.user.id;
@@ -231,5 +228,5 @@ router.put("/profile", async (ctx: Koa.Context) => {
     ctx.status = 500;
     ctx.body = { message: "Internal server error", error: err.message };
   }
-});
-export default router;
+};
+export { signup, login, findId, updateProfile, verifyOtp, uploadFile, getOtp };

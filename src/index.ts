@@ -1,9 +1,8 @@
 import koa from "koa";
 import jwt from "koa-jwt";
 import bodyParser from "koa-bodyparser";
-import dataRouter from "./router/route.controller";
 import connection from "./datasource";
-import routes from "./router/route.controller";
+import routes from "./router/route";
 const app = new koa();
 app.use(bodyParser());
 app.use(async (ctx, next) => {
@@ -26,7 +25,6 @@ app.use(auth.unless({ path: [/^\/public/, /^\/signup/, /^\/login/,/^\/get-otp/,/
 const router = routes;
 
 app.use(router.routes()).use(router.allowedMethods());
-app.use(dataRouter.routes());
-app.use(dataRouter.allowedMethods());
+
 
 export default app;

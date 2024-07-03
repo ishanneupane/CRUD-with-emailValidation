@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { Repository } from "typeorm";
 import User from "../entity/user";
 import Koa from "koa";
-import connection from "../datasource";
+import connection from "../data-source";
 export const seedDatabase = async () => {   
   try {
     const data: Repository<User> = await connection.getRepository(User);

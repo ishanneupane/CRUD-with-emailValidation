@@ -1,7 +1,7 @@
 import koa from "koa";
 import jwt from "koa-jwt";
 import bodyParser from "koa-bodyparser";
-import connection from "./datasource";
+import connection from "./data-source";
 import routes from "./router/route";
 const app = new koa();
 app.use(bodyParser());

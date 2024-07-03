@@ -1,7 +1,7 @@
 
 import app from ".";
 import { seedDatabase } from "./seeders/user-seeder";
-import dataconnection from "./datasource";
+import dataconnection from "./data-source";
 
 const PORT = 8080;
 

@@ -4,7 +4,7 @@ export class Table21719911453686 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-        CREATE TABLE "migrateUser" (
+        CREATE TABLE "migratedUser" (
             "id" SERIAL PRIMARY KEY,
             "fullname" VARCHAR(255) NOT NULL,
             "email" VARCHAR(255) NOT NULL UNIQUE,

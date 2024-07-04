@@ -11,7 +11,8 @@
     "test": "jest",
     "typeorm": "npx typeorm-ts-node-commonjs --dataSource src/data-source.ts",
     "typeorm:migrate": "yarn typeorm migration:run ",
-    "typeorm:generate": "yarn typeorm migration:generate src/migration/"
+    "typeorm:generate": "yarn typeorm migration:generate src/migration/",
+    "typeorm:revert": "yarn typeorm migration:revert"
   },
   "author": "",
   "license": "ISC",

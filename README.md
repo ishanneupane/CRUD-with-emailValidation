@@ -1,135 +1,103 @@
-CRUD WITH EMAIL VALIDATION
-This project is a back-end that includes features such as email validation using nodemailer with OTP, PostgreSQL as the database, file uploads using multer, and authentication using JWT tokens and bcrypt for password encryption.
+# CRUD WITH EMAIL VALIDATION
 
-Table of Contents
+This project includes email validation using Nodemailer with OTP, PostgreSQL as the database, file uploads using Multer, and authentication using JWT and Bcrypt for password encryption.
 
-Configuration
-Usage
-Features
-API Endpoints
-Contributing
-License
-Installation
-Clone the repository:
+## Table of Contents
 
+- [Installation](#installation)
+- [Project Structure](#project-structure)
+- [Environment Variables](#environment-variables)
+- [Scripts](#scripts)
+- [Usage](#usage)
+- [Endpoints](#endpoints)
+- [License](#license)
 
+## Installation
 
-Create a new database.
-Run the necessary SQL scripts to create the required tables.
-Set up environment variables:
+1. Clone the repository:
 
-Create a .env file in the root directory and add the following environment variables:
+    ```bash
+    git clone <repository-url>
+    cd <repository-directory>
+    ```
 
+2. Install the dependencies:
 
-PORT=3000
-DATABASE_URL=your_postgres_connection_string
-JWT_SECRET=your_jwt_secret
-EMAIL_SERVICE=your_email_service
-EMAIL_USER=your_email_user
-EMAIL_PASS=your_email_password
-Configuration
-Configure Nodemailer for email validation:
+    ```bash
+    npm install
+    ```
 
-Update the EMAIL_SERVICE, EMAIL_USER, and EMAIL_PASS in the .env file with your email service provider's details.
+3. Set up the environment variables in a `.env` file (see below).
 
-Configure PostgreSQL:
+4. Run migrations and seeders to set up the database:
 
-Update the DATABASE_URL in the .env file with your PostgreSQL connection string.
+    ```bash
+    npm run migrate
+    npm run seed
+    ```
 
-Configure JWT:
+## Project Structure
 
-Update the JWT_SECRET in the .env file with your secret key for JWT token generation.
+Sure, here is a sample README for your project that includes email validation using Nodemailer with OTP, PostgreSQL as the database, file uploads using Multer, and authentication using JWT and Bcrypt for password encryption.
 
-Usage
-Start the server:
+markdown
+Copy code
+# Project Title
 
+This project includes email validation using Nodemailer with OTP, PostgreSQL as the database, file uploads using Multer, and authentication using JWT and Bcrypt for password encryption.
 
-npm start
-Access the application at http://localhost:3000.
+## Table of Contents
 
-Features
-Email Validation: Uses Nodemailer to send an OTP to the user's email for validation.
-PostgreSQL Database: Stores user data securely.
-File Upload: Uses Multer for handling file uploads.
-Authentication: Implements JWT tokens for secure authentication and bcrypt for password encryption.
-API Endpoints
-User Registration
-URL: /api/signup
+- [Installation](#installation)
+- [Project Structure](#project-structure)
+- [Environment Variables](#environment-variables)
+- [Scripts](#scripts)
+- [Usage](#usage)
+- [Endpoints](#endpoints)
+- [License](#license)
 
-Method: POST
+## Installation
 
-Description: Registers a new user and sends an OTP for email validation.
+1. Clone the repository:
 
-Request Body:
+    ```bash
+    git clone <repository-url>
+    cd <repository-directory>
+    ```
 
+2. Install the dependencies:
 
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
-Response:
+    ```bash
+    npm install
+    ```
 
+3. Set up the environment variables in a `.env` file (see below).
 
-{
-  "message": "User registered successfully. Please check your email for the OTP."
-}
-Email Validation
-URL: /api/validate-otp
+4. Run migrations and seeders to set up the database:
 
-Method: POST
+    ```bash
+    npm run migrate
+    npm run seed
+    ```
 
-Description: Validates the user's email using the OTP.
+## Project Structure
 
-Request Body:
-
-{
-  "email": "user@example.com",
-  "otp": "123456"
-}
-Response:
-
-{
-  "message": "Email validated successfully."
-}
-User Login
-URL: /api/login
-
-Method: POST
-
-Description: Authenticates the user and returns a JWT token.
-
-Request Body:
-
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
-Response:
-
-
-{
-  "token": "your_jwt_token"
-}
-File Upload
-URL: /api/upload
-
-Method: POST
-
-Description: Uploads a file.
-
-Headers:
-
-Authorization: Bearer your_jwt_token
-Request: multipart/form-data
-
-Response:
-
-
-{
-  "message": "File uploaded successfully."
-}
-Contributing
-Contributions are welcome! Please submit a pull request or open an issue to discuss any changes.
-
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
+src/
+├── entity/
+│ └── User.ts
+├── helper/
+│ └── email.ts
+├── router/
+│ ├── authRouter.ts
+│ ├── fileRouter.ts
+│ └── otpRouter.ts
+├── migration/
+│ └── 20220701000000-create-user.ts
+├── schema/
+│ └── userSchema.ts
+├── seeders/
+│ └── seed-users.ts
+├── data-source.ts
+├── index.ts
+├── jest.config.ts
+├── server.ts

@@ -81,23 +81,33 @@ This project includes email validation using Nodemailer with OTP, PostgreSQL as 
     ```
 
 ## Project Structure
+project-root
+│
+├── src
+│   ├── entity          # Contains entity definitions
+│   ├── helper          # Helper functions and utilities
+│   ├── migration       # Database migration files
+│   ├── router          # Route definitions
+│   ├── schema          # Database schema definitions
+│   ├── seeders         # Seed data for the database
+│   ├── data-source.ts  # Data source configuration
+│   ├── index.ts        # Entry point of the application
+│   ├── test.config.ts  # Configuration for testing
+│   └── server.ts       # Server configuration and initialization
+│
+├── uploads             # Directory for file uploads
+│
+├── .gitattributes      # Git attributes configuration
+│
+├── .gitignore          # Specifies files and directories to be ignored by Git
+│
+├── README.md           # Project documentation and instructions
+│
+├── nodemon.json        # Nodemon configuration file
+│
+├── package.json        # Project metadata, scripts, and dependencies
+│
+├── tsconfig.json       # TypeScript configuration file
+│
+└── yarn.lock           # Yarn lock file for dependency management
 
-src/
-├── entity/
-│ └── User.ts
-├── helper/
-│ └── email.ts
-├── router/
-│ ├── authRouter.ts
-│ ├── fileRouter.ts
-│ └── otpRouter.ts
-├── migration/
-│ └── 20220701000000-create-user.ts
-├── schema/
-│ └── userSchema.ts
-├── seeders/
-│ └── seed-users.ts
-├── data-source.ts
-├── index.ts
-├── jest.config.ts
-├── server.ts

@@ -45,7 +45,7 @@ const generateToken = (id: number) => {
   });
 };
 
-const uploadFile = (ctx: Koa.Context, next: Koa.Next) => {
+const uploadFile = async  (ctx: Koa.Context, next: Koa.Next) => {
   return new Promise<void>((resolve, reject) => {
     upload.single("file")((ctx as any).req, (ctx as any).res, (err: any) => {
       if (err) {
@@ -100,7 +100,7 @@ const getOtp = async (ctx: Koa.Context) => {
   await data.update({ email:email }, { otp: otp, otpExpiry: new Date(Date.now() + 5 * 60 * 1000) });
     ctx.body = { message: "OTP sent successfully to email" };
   } catch (error) {
-    console.error("Error sending OTP:", error); // Log the error
+    console.error("Error sending OTP:", error);
     ctx.status = 500;
     ctx.body = { message: "Internal server error", error: error.message };
   }

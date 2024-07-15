@@ -2,6 +2,7 @@ import koa from "koa";
 import bodyParser from "koa-bodyparser";
 import connection from "./data-source";
 import routes from "./router";
+import { loadPermissions } from "./middleware/authorization";
 const app = new koa();
 app.use(bodyParser());
 app.use(async (ctx, next) => {
@@ -23,6 +24,9 @@ app.use(async (ctx, next) => {
 const router = routes;
 
 app.use(router.routes()).use(router.allowedMethods());
+
+app.use(loadPermissions)
+
 
 
 export default app;

@@ -1,10 +1,10 @@
 import "reflect-metadata";
-import { Admin, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import User from "../entity/user";
 import connection from "../data-source";
 export const seedDatabase = async () => {   
   try {
-    const data: Repository<User> = await connection.getRepository(User);
+    const data: Repository<User> = connection.getRepository(User);
     const usersToCreate = {
       name: "ram",
       email: "ram@example.com",
@@ -17,9 +17,9 @@ export const seedDatabase = async () => {
     });
     if (!existingUser) {
       await data.save(usersToCreate);
-      console.log("Database seeded");
+      console.log("User in Database seeded");
     } else {
-      console.log("Database already seeded");
+      console.log("User already seeded");
     }
   } catch (error) {
     console.log(error);

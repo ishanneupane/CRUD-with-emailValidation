@@ -1,17 +1,32 @@
 import { AccessControl } from "accesscontrol";
-
+import { Repository } from "typeorm";
+import Permission from "../entity/permission";
 const ac = new AccessControl();
 
-ac.grant("admin")
-  .updateAny("user")
-  .deleteAny("user")
-  .createAny("user")
-  .readAny("user");
+ export const loadPermissions  = async (ctx: any) => {
+  const data: Repository<Permission> = ctx.state.db.getRepository(Permission);
+  const permissions = await data.find();
 
-ac.grant("user")
-  .readOwn("user")
-  .updateOwn("user")
-  .deleteOwn("user");
+  const permissionPromises = permissions.map(async (party) => {
+    return (ac.grant(party.role) as any)[party.action](party.resource);
+  });
+
+  // Wait for all promises to complete
+  const permission = await Promise.all(permissionPromises);
+
+  console.log({permission})
+
+  return ac
+};
+
+export {ac}
 
 
-export const accessControl = ac;
+// ac.grant("user")
+//   .readOwn("user")
+//   .updateOwn("user")
+//   .deleteOwn("user");
+// ac.grant("admin")
+//   .readAny("user")
+//   .updateOwn("user")
+//   .deleteOwn("user");

@@ -1,4 +1,5 @@
 import { auth } from "../middleware/authentication";
+import { loadPermissions } from "../middleware/authorization";
 import { checkPermissions } from "../middleware/permissionManager";
 import {
   signup,
@@ -13,19 +14,18 @@ import Router from "koa-router";
 
 const routerOpts: Router.IRouterOptions = {};
 const router = new Router(routerOpts);
+
+
+router.post("/signup",loadPermissions);
+router.post("/login", login);
+router.post("/get-otp", getOtp);
+router.post("/verify-otp", verifyOtp);
 router.post(
   "/upload-single-file",
   auth,
-  checkPermissions("createAny", "user"),
   uploadFile
 );
-router.post("/get-otp", getOtp);
-router.post("/verify-otp", verifyOtp);
-router.get("/:id", auth, checkPermissions("readAny", "user"), findId);
-
-router.post("/signup", signup);
-
-router.post("/login", login);
+router.get("/:id", auth, checkPermissions("readOwn", "user"), findId);
 router.put(
   "/update-profile",
   auth,

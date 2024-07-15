@@ -39,8 +39,8 @@ const upload = multer({
   },
 });
 
-const generateToken = (id: number) => {
-  return Jwt.sign({ id }, process.env.JWT_SECRET as string, {
+const generateToken = (id: number, role:string) => {
+  return Jwt.sign({ id,role }, process.env.JWT_SECRET as string, {
     expiresIn: "5h",
   });
 };
@@ -189,7 +189,7 @@ const login= async (ctx: Koa.Context) => {
       return;
     }
     if (isMatch ) {
-      const token = generateToken(userData.id);
+      const token = generateToken(userData.id, userData.role);
       ctx.body = { message: "User logged in", token };
     } else {
       ctx.status = 401;

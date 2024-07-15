@@ -38,11 +38,6 @@ This project includes email validation using Nodemailer with OTP, PostgreSQL as 
 
 Sure, here is a sample README for your project that includes email validation using Nodemailer with OTP, PostgreSQL as the database, file uploads using Multer, and authentication using JWT and Bcrypt for password encryption.
 
-markdown
-Copy code
-# Project Title
-
-This project includes email validation using Nodemailer with OTP, PostgreSQL as the database, file uploads using Multer, and authentication using JWT and Bcrypt for password encryption.
 
 ## Table of Contents
 

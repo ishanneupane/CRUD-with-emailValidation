@@ -49,29 +49,6 @@ Sure, here is a sample README for your project that includes email validation us
 - [Endpoints](#endpoints)
 - [License](#license)
 
-## Installation
-
-1. Clone the repository:
-
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    ```
-
-2. Install the dependencies:
-
-    ```bash
-    npm install
-    ```
-
-3. Set up the environment variables in a `.env` file (see below).
-
-4. Run migrations to set up the database:
-
-    ```bash
-    npm run migrate
- 
-    ```
 
 ## Project Structure
 

@@ -11,7 +11,7 @@ const connectionOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  synchronize:false,
+  synchronize:true,
   logging: false,
   entities: [
     join(parentDir, "src","entity", "*.ts"),

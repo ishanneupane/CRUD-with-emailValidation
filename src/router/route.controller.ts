@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1024 * 1024 * 4 },
+  limits: { fileSize: 1024 * 1024  },
   fileFilter(req, file, callback) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       return callback(
@@ -69,7 +69,8 @@ const uploadFile = async  (ctx: Koa.Context, next: Koa.Next) => {
       };
     })
     .catch((err) => {
-      ctx.status = 500;
+      console.log("ctx.request.file", (ctx.req as any).file);
+      ctx.status = 400;
       ctx.body = {
         message: "File upload failed",
         error: { message: err.message },

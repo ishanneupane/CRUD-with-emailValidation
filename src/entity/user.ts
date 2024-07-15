@@ -25,4 +25,6 @@ export default class User {
   otp: Number;
   @Column({nullable: true})
   otpExpiry: Date;
+  @Column({nullable: true, default: "user"})
+  role: string;
 }

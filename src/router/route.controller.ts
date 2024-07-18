@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 1024 * 1024  },
+  limits: { fileSize: 1024 * 1024 },
   fileFilter(req, file, callback) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       return callback(
@@ -39,13 +39,7 @@ const upload = multer({
   },
 });
 
-const generateToken = (id: number, role:string) => {
-  return Jwt.sign({ id,role }, process.env.JWT_SECRET as string, {
-    expiresIn: "5h",
-  });
-};
-
-const uploadFile = async  (ctx: Koa.Context, next: Koa.Next) => {
+const uploadFile = async (ctx: Koa.Context, next: Koa.Next) => {
   return new Promise<void>((resolve, reject) => {
     upload.single("file")((ctx as any).req, (ctx as any).res, (err: any) => {
       if (err) {
@@ -77,6 +71,12 @@ const uploadFile = async  (ctx: Koa.Context, next: Koa.Next) => {
       };
     });
 };
+
+const generateToken = (id: number, role: string) => {
+  return Jwt.sign({ id, role }, process.env.JWT_SECRET as string, {
+    expiresIn: "5h",
+  });
+};
 const getOtp = async (ctx: Koa.Context) => {
   const { email } = ctx.request.body as { email: string };
 
@@ -86,19 +86,21 @@ const getOtp = async (ctx: Koa.Context) => {
     return;
   }
   const data: Repository<User> = ctx.state.db.getRepository(User);
-  const userData = await data.findOne({ where: { email:email } });
+  const userData = await data.findOne({ where: { email: email } });
   if (!userData) {
     ctx.status = 404;
     ctx.body = { message: "User not found" };
     return;
   }
 
-
   const otp = generateOtp();
   try {
     await sendOtp(email, otp);
-    
-  await data.update({ email:email }, { otp: otp, otpExpiry: new Date(Date.now() + 5 * 60 * 1000) });
+
+    await data.update(
+      { email: email },
+      { otp: otp, otpExpiry: new Date(Date.now() + 5 * 60 * 1000) }
+    );
     ctx.body = { message: "OTP sent successfully to email" };
   } catch (error) {
     console.error("Error sending OTP:", error);
@@ -106,8 +108,8 @@ const getOtp = async (ctx: Koa.Context) => {
     ctx.body = { message: "Internal server error", error: error.message };
   }
 };
- const verifyOtp = async (ctx: Koa.Context) => {
-  const { email, otp } = ctx.request.body as { email: string, otp: number };
+const verifyOtp = async (ctx: Koa.Context) => {
+  const { email, otp } = ctx.request.body as { email: string; otp: number };
 
   if (!email || !otp) {
     ctx.status = 400;
@@ -116,20 +118,21 @@ const getOtp = async (ctx: Koa.Context) => {
   }
 
   const data: Repository<User> = ctx.state.db.getRepository(User);
-  const userData = await data.findOne({ where: { email:email } });
-  if (otp==userData.otp) {
-  await data.update({ email:email }, { isValidEmail: true,otp: null, otpExpiry: null });
-    
+  const userData = await data.findOne({ where: { email: email } });
+  if (otp == userData.otp) {
+    await data.update(
+      { email: email },
+      { isValidEmail: true, otp: null, otpExpiry: null }
+    );
+
     ctx.body = { message: "OTP verified successfully" };
   } else {
     ctx.status = 400;
-    ctx.body = { message: "Invalid OTP" }; 
+    ctx.body = { message: "Invalid OTP" };
   }
-
-
 };
 
- const findId=async (ctx: Koa.Context) => {
+const findId = async (ctx: Koa.Context) => {
   const data: Repository<User> = ctx.state.db.getRepository(User);
   const userData = await data.findOne({
     where: { id: (ctx as any).params.id },
@@ -142,7 +145,7 @@ const getOtp = async (ctx: Koa.Context) => {
   ctx.body = { data: userData };
 };
 
-const signup= async (ctx: Koa.Context) => {
+const signup = async (ctx: Koa.Context) => {
   try {
     const data: Repository<User> = ctx.state.db.getRepository(User);
     await userValidationCreateSchema.validate(ctx.request.body);
@@ -161,7 +164,7 @@ const signup= async (ctx: Koa.Context) => {
   }
 };
 
-const login= async (ctx: Koa.Context) => {
+const login = async (ctx: Koa.Context) => {
   try {
     await userValidationCreateSchema.validate(ctx.request.body);
     const { email, password } = ctx.request.body as {
@@ -182,13 +185,12 @@ const login= async (ctx: Koa.Context) => {
     }
     const isMatch = await bcrypt.compare(password, userData.password);
 
-
-    if(userData.isValidEmail==false){
-      ctx.status=400;
-      ctx.body={message:"Please verify your email first"}
+    if (userData.isValidEmail == false) {
+      ctx.status = 400;
+      ctx.body = { message: "Please verify your email first" };
       return;
     }
-    if (isMatch ) {
+    if (isMatch) {
       const token = generateToken(userData.id, userData.role);
       ctx.body = { message: "User logged in", token };
     } else {
@@ -199,8 +201,8 @@ const login= async (ctx: Koa.Context) => {
     ctx.status = 500;
     ctx.body = { message: "Internal server error", error: error.message };
   }
-}
-const updateProfile= async (ctx: Koa.Context) => {
+};
+const updateProfile = async (ctx: Koa.Context) => {
   try {
     await userValidationUpdateSchema.validate(ctx.request.body);
     const userId = ctx.state.user.id;

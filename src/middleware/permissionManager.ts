@@ -6,7 +6,7 @@ export const checkPermissions = (action: string, resource: string) => {
     try {
    
       const userRole = ctx.state.user.role;
-      console.log("userrole",userRole);
+      console.log("ac",( ac as any).can(userRole))
       const permission =( ac as any).can(userRole)[action](resource);
       console.log("ac",ac)
 

@@ -25,7 +25,7 @@ router.post(
   auth,
   uploadFile
 );
-router.get("/:id", auth, checkPermissions("readOwn", "user"), findId);
+router.get("/:id", auth, checkPermissions("readAny", "user"), findId);
 router.put(
   "/update-profile",
   auth,

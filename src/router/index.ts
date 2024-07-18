@@ -16,7 +16,7 @@ const routerOpts: Router.IRouterOptions = {};
 const router = new Router(routerOpts);
 
 
-router.post("/signup",loadPermissions);
+router.post("/signup",signup);
 router.post("/login", login);
 router.post("/get-otp", getOtp);
 router.post("/verify-otp", verifyOtp);

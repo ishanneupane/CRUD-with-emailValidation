@@ -1,55 +1,30 @@
 import * as Koa from "koa";
 import * as Jwt from "jsonwebtoken";
-import multer from "multer";
+
 import * as bcrypt from "bcrypt";
 import User from "../entity/user";
-import path from "path";
 import { Repository } from "typeorm";
-import { generateOtp, sendOtp } from "../helper/otp.helper";
+import { otp } from "../lib/otp/otpGenerator";
 import {
   userValidationCreateSchema,
   userValidationUpdateSchema,
 } from "../schema/validator";
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads");
-  },
-
-  filename: function (req, file, cb) {
-    const originalName = encodeURIComponent(
-      path.parse(file.originalname).name
-    ).replace(/[^a-zA-Z0-9]/g, "");
-    const timestamp = Date.now();
-
-    const extension = path.extname(file.originalname).toLowerCase();
-    cb(null, originalName + timestamp + extension);
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 1024 * 1024 },
-  fileFilter(req, file, callback) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return callback(
-        new Error("Please upload an image with extension jpg, jpeg or png")
-      );
-    }
-    callback(null, true);
-  },
-});
-
+import { multerUploader } from "../lib/multer/multer";
 const uploadFile = async (ctx: Koa.Context, next: Koa.Next) => {
   return new Promise<void>((resolve, reject) => {
-    upload.single("file")((ctx as any).req, (ctx as any).res, (err: any) => {
-      if (err) {
-        reject(err);
-        return;
-      } else {
-        resolve();
-        return;
+    multerUploader.upload.single("file")(
+      (ctx as any).req,
+      (ctx as any).res,
+      (err: any) => {
+        if (err) {
+          reject(err);
+          return;
+        } else {
+          resolve();
+          return;
+        }
       }
-    });
+    );
   })
     .then(() => {
       console.log("ctx.request.file", (ctx.req as any).file);
@@ -93,42 +68,19 @@ const getOtp = async (ctx: Koa.Context) => {
     return;
   }
 
-  const otp = generateOtp();
+  const Otp = otp.generateOtp();
   try {
-    await sendOtp(email, otp);
+    await otp.sendOtp(email, Otp);
 
     await data.update(
       { email: email },
-      { otp: otp, otpExpiry: new Date(Date.now() + 5 * 60 * 1000) }
+      { otp: Otp, otpExpiry: new Date(Date.now() + 5 * 60 * 1000) }
     );
     ctx.body = { message: "OTP sent successfully to email" };
   } catch (error) {
     console.error("Error sending OTP:", error);
     ctx.status = 500;
     ctx.body = { message: "Internal server error", error: error.message };
-  }
-};
-const verifyOtp = async (ctx: Koa.Context) => {
-  const { email, otp } = ctx.request.body as { email: string; otp: number };
-
-  if (!email || !otp) {
-    ctx.status = 400;
-    ctx.body = { message: "Email and OTP are required" };
-    return;
-  }
-
-  const data: Repository<User> = ctx.state.db.getRepository(User);
-  const userData = await data.findOne({ where: { email: email } });
-  if (otp == userData.otp) {
-    await data.update(
-      { email: email },
-      { isValidEmail: true, otp: null, otpExpiry: null }
-    );
-
-    ctx.body = { message: "OTP verified successfully" };
-  } else {
-    ctx.status = 400;
-    ctx.body = { message: "Invalid OTP" };
   }
 };
 
@@ -144,7 +96,52 @@ const findId = async (ctx: Koa.Context) => {
   }
   ctx.body = { data: userData };
 };
+const findAll = async (ctx: any): Promise<void> => {
+  const userRepository: Repository<User> = ctx.state.db.getRepository(User);
 
+  try {
+    // Adding Pagination
+    const limitValue = parseInt(ctx.query.limit as string, 10) || 5;
+    const skipValue = parseInt(ctx.query.skip as string, 10) || 0;
+
+    // Adding Query Parameter
+    const filter = ctx.query.filter
+      ? JSON.parse(ctx.query.filter as string)
+      : {};
+
+    // Build the query with QueryBuilder
+    const queryBuilder = userRepository.createQueryBuilder("user");
+
+    // Apply filters if present
+    if (Object.keys(filter).length > 0) {
+      Object.keys(filter).forEach((key, index) => {
+        const value = filter[key];
+
+        // if (typeof value === 'string' && value.endsWith('*')) {
+        queryBuilder.andWhere(`user.${key} LIKE :${key}`, {
+          [key]: value.replace("*", "%") + "%",
+        });
+        // } else {
+        // queryBuilder.andWhere(`user.${key} = :${key}`, { [key]: value });
+        // }
+      });
+    }
+    // Apply pagination
+    queryBuilder.take(limitValue).skip(skipValue);
+
+    // Execute the query
+    const users = await queryBuilder.getMany();
+
+    ctx.body = { data: users };
+  } catch (error) {
+    console.error(error);
+    ctx.status = 500;
+    ctx.body = {
+      message: "Internal server error",
+      error: "Problem finding Data",
+    };
+  }
+};
 const signup = async (ctx: Koa.Context) => {
   try {
     const data: Repository<User> = ctx.state.db.getRepository(User);
@@ -232,4 +229,4 @@ const updateProfile = async (ctx: Koa.Context) => {
     ctx.body = { message: "Internal server error", error: err.message };
   }
 };
-export { signup, login, findId, updateProfile, verifyOtp, uploadFile, getOtp };
+export { signup, login, findId, updateProfile, uploadFile, getOtp, findAll };

@@ -1,6 +1,10 @@
 import nodemailer from "nodemailer";
+import * as  dotenv from "dotenv";
 
-export function generateOtp() {
+dotenv.config();
+const userId=process.env.MAILER_USER
+const password= process.env.MAILER_PASSWORD
+const generateOtp = function generateOtp() {
   const digits = "0123456789";
   let OTP = "";
   for (let i = 0; i < 6; i++) {
@@ -9,17 +13,17 @@ export function generateOtp() {
   return OTP;
 }
 
-export let transport = nodemailer.createTransport({
+ let transport = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
   port: 2525,
   auth: {
-    user: "6d401017890a56",
-    pass: "58046d264009bd",
+    user: userId  ,
+    pass: password,
   },
 });
-export async function sendOtp(email: string, otp: string) {
+const sendOtp = async function sendOtp(email: string, otp: string) {
   let mailOptions = {
-    from: "6d401017890a56", // Sender's email address
+    from: userId , // Sender's email address
     to: email,
     subject: "Your OTP for verification",
     text: `Your OTP is: ${otp}`,
@@ -32,3 +36,5 @@ export async function sendOtp(email: string, otp: string) {
     console.error("Error sending email: ", error);
   }
 }
+
+export const otp=  {generateOtp,sendOtp}

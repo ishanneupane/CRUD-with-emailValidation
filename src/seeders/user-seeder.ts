@@ -2,15 +2,14 @@ import "reflect-metadata";
 import { Repository } from "typeorm";
 import User from "../entity/user";
 import connection from "../data-source";
-export const seedDatabase = async () => {   
+export const seedDatabase = async () => {
   try {
     const data: Repository<User> = connection.getRepository(User);
     const usersToCreate = {
       name: "ram",
       email: "ram@example.com",
       password: "ram",
-      role:"admin"
-
+      role: "admin",
     };
     const existingUser = await data.findOne({
       where: { email: usersToCreate.email },

@@ -3,23 +3,21 @@ import { Repository } from "typeorm";
 import Permission from "../entity/permission";
 const ac = new AccessControl();
 
- export const loadPermissions  = async (ctx: any) => {
+export const loadPermissions = async (ctx: any) => {
   const data: Repository<Permission> = ctx.state.db.getRepository(Permission);
   const permissions = await data.find();
   const permissionPromises = permissions.map(async (party) => {
     return (ac.grant(party.role) as any)[party.action](party.resource);
   });
 
- 
   const permission = await Promise.all(permissionPromises);
 
-  console.log({permission})
+  console.log({ permission });
 
-  return ac
+  return ac;
 };
 
-export {ac}
-
+export { ac };
 
 // ac.grant("user")
 //   .readOwn("user")

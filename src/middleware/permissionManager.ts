@@ -1,17 +1,16 @@
 import { ac } from "./authorization";
-import { Context, Next } from "koa";  // Assuming you're using Koa
+import { Context, Next } from "koa"; // Assuming you're using Koa
 
 export const checkPermissions = (action: string, resource: string) => {
   return async (ctx: Context, next: Next) => {
     try {
-   
       const userRole = ctx.state.user.role;
-      console.log("ac",( ac as any).can(userRole))
-      const permission =( ac as any).can(userRole)[action](resource);
-      console.log("ac",ac)
+      console.log("ac", (ac as any).can(userRole));
+      const permission = (ac as any).can(userRole)[action](resource);
+      console.log("ac", ac);
 
       console.log(permission);
-      
+
       if (permission.granted) {
         await next();
       } else {

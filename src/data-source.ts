@@ -11,14 +11,13 @@ const connectionOptions: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  synchronize:true,
+  synchronize: true,
   logging: false,
   entities: [
-    join(parentDir, "src","entity", "*.ts"),
+    join(parentDir, "src", "entity", "*.ts"),
     join(parentDir, "entity", "*.js"),
   ],
   migrations: ["src/migration/**/*.ts"],
-  
- };
+};
 const connection = new DataSource(connectionOptions);
 export default connection;

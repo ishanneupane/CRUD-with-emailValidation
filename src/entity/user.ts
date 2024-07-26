@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export default class User {
@@ -8,7 +14,7 @@ export default class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   name: string;
 
   @Column()
@@ -19,12 +25,12 @@ export default class User {
 
   @UpdateDateColumn({ type: "timestamp" })
   updated_at: Date;
-  @Column({default: false, nullable: true})
+  @Column({ default: false, nullable: true })
   isValidEmail: Boolean;
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   otp: Number;
-  @Column({nullable: true})
+  @Column({ nullable: true })
   otpExpiry: Date;
-  @Column({nullable: true, default: "user"})
+  @Column({ nullable: true, default: "user" })
   role: string;
 }

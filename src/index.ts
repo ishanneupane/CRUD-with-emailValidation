@@ -18,15 +18,12 @@ app.use(async (ctx, next) => {
   }
 });
 
-
 // app.use(auth.unless({ path: [/^\/public/, /^\/signup/, /^\/login/,/^\/get-otp/,/^\/verify-otp/] }));
 
 const router = routes;
 
 app.use(router.routes()).use(router.allowedMethods());
 
-app.use(loadPermissions)
-
-
+app.use(loadPermissions);
 
 export default app;

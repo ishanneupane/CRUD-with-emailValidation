@@ -1,9 +1,8 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class Table21719911453686 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         CREATE TABLE "migratedUser" (
             "id" SERIAL PRIMARY KEY,
             "fullname" VARCHAR(255) NOT NULL,
@@ -12,10 +11,9 @@ export class Table21719911453686 implements MigrationInterface {
             "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
             "updatedAt" TIMESTAMP NOT NULL DEFAULT now())
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE "migrateUser"`);
-    }
-
+  }
 }

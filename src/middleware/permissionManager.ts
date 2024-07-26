@@ -1,5 +1,5 @@
 import { ac } from "./authorization";
-import { Context, Next } from "koa"; // Assuming you're using Koa
+import { Context, Next } from "koa"; 
 
 export const checkPermissions = (action: string, resource: string) => {
   return async (ctx: Context, next: Next) => {
